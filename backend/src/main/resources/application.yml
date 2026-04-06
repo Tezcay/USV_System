@@ -1,25 +1,53 @@
 spring:
-  # ???????
+  # 数据库连接总配置
   datasource:
-    # ??????? MySQL 8.0+ ?????
+    # 数据库驱动：这里使用的是 MySQL 8.0 及以上版本的新版驱动类
     driver-class-name: com.mysql.cj.jdbc.Driver
-    # ????????localhost ?????3306 ????usv_simulation_db ???????
-    url: jdbc:mysql://localhost:3306/usv_simulation_db?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&useSSL=false
-    # ?????
+    # 数据库连接地址：连接本机(localhost)的3306端口，数据库名为usv_simulation_db
+    # 参数说明：serverTimezone=GMT%2B8(东八区时间), useUnicode=true&characterEncoding=utf-8(防乱码), useSSL=false(关闭SSL安全警告)
+    url: "jdbc:mysql://localhost:3306/usv_simulation_db?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true"
+    # 数据库登录用户名
     username: root
-    # ???????????? MySQL ?????? ???
-    password: 05960596
+    # 数据库登录密码（请确认这是你本地 MySQL 的真实密码）
+    password: "05960596"
+    # 给 URL 和 密码 加上双引号，防止特殊字符干扰
 
-  # MyBatis ????????? SQL ????
-  mybatis-plus:
-    # ??????????????? Java ?
-    type-aliases-package: com.hzk.backend.entity
-    configuration:
-      # ?????? SQL ??????????????????? SQL
-      log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-      # ???????????????? device_name ????? Java ?? deviceName?
-      map-underscore-to-camel-case: true
+    # Hikari 数据库连接池配置（老师要求的性能优化配置）
+    hikari:
+      # 连接池最大连接数（最多可以同时允许 50 个请求连数据库）
+      maximum-pool-size: 50
+      # 最小空闲连接数
+      minimum-idle: 10
+      # 连接超时时间（毫秒），30000 也就是 30 秒连不上就报错
+      connection-timeout: 30000
+      # 空闲连接存活最大时间
+      idle-timeout: 60000
+      # 连接的生命周期最大值
+      max-lifetime: 180000
 
-# ????????? 8080
+# MyBatis 基础配置（负责让 Java 和 SQL 对接）
+mybatis:
+  # 实体类（POJO）所在的包路径，配置后，以后在 XML 文件里写类名就不需要写又长又臭的全包名了
+  type-aliases-package: com.hzk.backend.pojo
+  # 给 MyBatis 指路 XML 文件在 Mapper 文件夹里
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    # 开启控制台 SQL 打印日志：极度重要！开发时控制台会打印出真实执行的 SQL 语句，抓 Bug 必备
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # 开启驼峰命名自动映射：极度重要！能自动把数据库带下划线的字段（如 device_name）映射给 Java 里的驼峰变量（如 deviceName）
+    map-underscore-to-camel-case: true
+    # 关闭“激进的延迟加载”
+    aggressive-lazy-loading: false
+    # 开启二级缓存
+    cache-enabled: true
+
+# 日志配置
+logging:
+  level:
+    com.hzk.backend: debug
+    org.springframework.web: debug
+
+# Web 服务器配置
 server:
+  # 指定当前后端的运行端口，以后我们在浏览器访问就是 http://localhost:8080
   port: 8080

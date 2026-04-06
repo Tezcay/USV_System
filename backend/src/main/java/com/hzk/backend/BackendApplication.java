@@ -1,12 +1,15 @@
 package com.hzk.backend;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
+@MapperScan("com.hzk.backend.mapper") // 导航仪
 public class BackendApplication {
 
     public static void main(String[] args) {
+
         SpringApplication.run(BackendApplication.class, args);
     }
 
