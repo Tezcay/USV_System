@@ -45,7 +45,7 @@
 				}
 
 				// 2. 发送请求给 Java 后端
-				this.$axios.get('http://localhost:8080/adminLogin', {
+				this.$axios.get('http://localhost:8080/user/login', {
 					params: {
 						username: this.loginForm.username,
 						password: this.loginForm.password

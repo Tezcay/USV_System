@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.hzk.backend.dto.JsonDto;
 import com.hzk.backend.utils.JwtUtils;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
@@ -17,6 +19,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
  * @Date: 2026/4/15 16:51
  * @Filename: JwtInterceptor
  */
+
+@Component
 public class JwtInterceptor implements HandlerInterceptor {
 
     @Override
@@ -35,9 +39,26 @@ public class JwtInterceptor implements HandlerInterceptor {
             return false;
         }
 
+        // 放行浏览器的 OPTIONS 预检请求（探路兵免死金牌）
+        if ("OPTIONS".equals(request.getMethod())) {
+            return true;
+        }
+
         // 4. 如果有通行证，验真伪和是否过期
         try {
-            JwtUtils.parseToken(token); // 让 JwtUtils 去解析
+            Claims claims = JwtUtils.parseToken(token); // 让 JwtUtils 去解析
+
+            // RBAC 权限校验
+            // 从 Token 中取用户的角色
+            String role = claims.get("role",  String.class);
+            // 获取用户当前正在请求的网址
+            String requestURI = request.getRequestURI();
+
+            // 如果网址包含"delete", 但role不是admin
+            if (requestURI.contains("delete") && !"admin".equals(role)) {
+                throw new RuntimeException("越权操作：普通用户禁止删除!");
+            }
+
             return true; // 解析成功则放行
         } catch (Exception e) {
             // 解析失败

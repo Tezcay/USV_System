@@ -1,8 +1,9 @@
 package com.hzk.backend.aspect;
 
 import com.hzk.backend.annotation.AutoLog;
-import com.hzk.backend.mapper.SysLogMapper;
+import com.hzk.backend.dto.JsonDto;
 import com.hzk.backend.pojo.SysLog;
+import com.hzk.backend.services.SysLogService;
 import com.hzk.backend.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,8 +31,9 @@ import java.util.Date;
 @Component
 public class AutoLogAspect {
 
+    // 注入 Service, @Async才能生效
     @Autowired
-    private SysLogMapper sysLogMapper;
+    private SysLogService sysLogService;
 
     @Around("@annotation(autoLog)")
     public Object recordLog(ProceedingJoinPoint pjp, AutoLog autoLog) throws Throwable{
@@ -39,6 +41,17 @@ public class AutoLogAspect {
         Object result = pjp.proceed();
 
         try {
+            // 修复核心逻辑
+            // 拦截业务失败的情况（比如账号密码错误）
+            if (result instanceof JsonDto) {
+                JsonDto jsonDto = (JsonDto) result;
+
+                if (jsonDto.getId() != 1) {
+                    // 如果状态码不是成功，说明业务失败（如密码错误），直接返回，不记录操作日志
+                    return result;
+                }
+            }
+
             ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             HttpServletRequest request = attributes.getRequest();
 
@@ -63,7 +76,7 @@ public class AutoLogAspect {
             String ipAddress = request.getRemoteAddr();
 
             SysLog sysLog = new SysLog(operator, new Date(), content, ipAddress);
-            sysLogMapper.insertLog(sysLog);
+            sysLogService.insertLog(sysLog);
 
             /*// 新的写法（使用 Builder）：
             SysLog sysLog = SysLog.builder()

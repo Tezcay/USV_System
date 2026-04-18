@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 @RestController // 标识当前类是一个请求处理类
-@CrossOrigin
 @RequestMapping("/user")
 public class SysUserController {
 

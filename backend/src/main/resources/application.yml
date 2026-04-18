@@ -24,6 +24,12 @@ spring:
       idle-timeout: 60000
       # 连接的生命周期最大值
       max-lifetime: 180000
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password:
+      database: 0
 
 # MyBatis 基础配置（负责让 Java 和 SQL 对接）
 mybatis:

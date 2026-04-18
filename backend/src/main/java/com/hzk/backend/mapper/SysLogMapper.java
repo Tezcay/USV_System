@@ -1,8 +1,9 @@
 package com.hzk.backend.mapper;
 
 import com.hzk.backend.pojo.SysLog;
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 /**
  * Author: 102300428_何振坤
@@ -17,4 +18,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface SysLogMapper {
     int insertLog(SysLog log);
+
+    // 查出所有的操作日志，按时间倒序（最新的在最上面）
+    List<SysLog> selectAllLogs();
 }

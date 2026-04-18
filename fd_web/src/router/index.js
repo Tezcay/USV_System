@@ -7,6 +7,7 @@ import DeviceList from '../views/DeviceList.vue'
 import RouteMap from '../views/RouteMap.vue'
 import TaskList from '../views/TaskList.vue'
 import ResultList from '../views/ResultList.vue'
+import Log from '../views/Log.vue'
 
 Vue.use(VueRouter)
 
@@ -28,6 +29,14 @@ const routes = [{
 				component: Dashboard,
 				meta: {
 					title: '系统概览'
+				}
+			},
+			{
+				path: 'log',
+				name: 'Log',
+				component: Log,
+				meta: {
+					title: '操作日志'
 				}
 			},
 			{

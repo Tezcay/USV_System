@@ -22,7 +22,7 @@
 				<el-menu-item index="/result"><i class="el-icon-document-checked"></i>结果归档</el-menu-item>
 			</el-submenu>
 
-			<el-menu-item index="/logs"><i class="el-icon-notebook-2"></i><span>操作日志</span></el-menu-item>
+			<el-menu-item index="/home/log"><i class="el-icon-notebook-2"></i><span>操作日志</span></el-menu-item>
 		</el-menu>
 	</div>
 </template>

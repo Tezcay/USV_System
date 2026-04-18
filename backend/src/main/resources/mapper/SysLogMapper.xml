@@ -5,4 +5,8 @@
         INSERT INTO sys_log(operator, operate_time, content, ip_address)
         VALUES(#{operator}, #{operateTime}, #{content}, #{ipAddress})
     </insert>
+
+    <select id="selectAllLogs" resultType="com.hzk.backend.pojo.SysLog">
+        SELECT * FROM sys_log ORDER BY operate_time DESC
+    </select>
 </mapper>
